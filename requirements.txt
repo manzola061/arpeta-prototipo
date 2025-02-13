@@ -1,0 +1,5 @@
+django
+django-phonenumber-field phonenumbers
+pillow
+psycopg2-binary
+qrcode

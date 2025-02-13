@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block titulo %} Lista de Camioneros {% endblock %}
+
+{% block contenido %}
+
+<div class="flex-1 p-6">
+    <div class="container mx-auto mt-8 px-4">
+        <div class="bg-white shadow-lg rounded-lg">
+            <div class="bg-gray-200 text-white rounded-t-lg px-6 py-4">
+                <h4 class="text-gray-900 font-serif text-3xl text-center">Lista de Camioneros</h4>
+                <a href="{% url 'crear_camionero' %}">
+                    <button class="bg-gray-600 text-gray-100 hover:bg-gray-900 hover:text-white px-4 py-2 rounded-lg text-lg">
+                        Agregar Camionero
+                    </button>
+                </a>
+            </div>
+            <div class="p-6">
+                <table class="min-w-full table-auto border-collapse">
+                    <thead>
+                        <tr class="border-b-2 border-gray-300">
+                            <th class="py-2 px-4 text-left">Cédula</th>
+                            <th class="py-2 px-4 text-left">Nombre</th>
+                            <th class="py-2 px-4 text-left">Apellido</th>
+                            <th class="py-2 px-4 text-left">Teléfono</th>
+                            <th class="py-2 px-4 text-left">Correo Electrónico</th>
+                            <th class="py-2 px-4 text-left">Dirección</th>
+                            <th class="py-2 px-4 text-left">Autónomo</th>
+                            <th class="py-2 px-4 text-left">Foto</th>
+                            <th class="py-2 px-4 text-left">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for camionero in camioneros %}
+                        <tr class="border-b border-gray-200">
+                            <td class="py-2 px-4">{{ camionero.cedula }}</td>
+                            <td class="py-2 px-4">{{ camionero.nombre }}</td>
+                            <td class="py-2 px-4">{{ camionero.apellido }}</td>
+                            <td class="py-2 px-4">{{ camionero.telefono }}</td>
+                            <td class="py-2 px-4">{{ camionero.correo }}</td>
+                            <td class="py-2 px-4">{{ camionero.direccion }}</td>
+                            <td class="py-2 px-4">{{ camionero.autonomo_texto }}</td>
+                            <td class="py-2 px-4">
+                                {% if camionero.foto_camionero %}
+                                    <a href="{{ camionero.foto_camionero.url }}" target="_blank">
+                                        <img src="{{ camionero.foto_camionero.url }}" alt="Foto de Perfil" class="w-12">
+                                    </a>
+                                {% else %}
+                                    <span class="text-gray-500 italic">Foto no disponible</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-2 px-4">
+                                <a href="{% url 'editar_camionero' camionero.cedula %}">
+                                    <button class="bg-sky-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                                        Editar
+                                    </button>
+                                </a>
+                                <a href="{% url 'borrar_camionero' camionero.cedula %}">
+                                    <button class="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full">
+                                        Borrar
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if camioneros.has_other_pages %}
+            <div class="bg-gray-100 text-center py-4 rounded-b-lg">
+                <div class="inline-block">
+                    {% if camioneros.has_previous %}
+                        <a href="?page=1" class="px-3 py-2 bg-gray-300 rounded-md">Primero</a>
+                        <a href="?page={{ camioneros.previous_page_number }}" class="px-3 py-2 bg-gray-300 rounded-md">Anterior</a>
+                    {% endif %}
+                    <span class="px-4 py-2 bg-gray-500 text-white rounded-md">
+                        Página {{ camioneros.number }} de {{ camioneros.paginator.num_pages }}
+                    </span>
+                    {% if camioneros.has_next %}
+                        <a href="?page={{ camioneros.next_page_number }}" class="px-3 py-2 bg-gray-300 rounded-md">Siguiente</a>
+                        <a href="?page={{ camioneros.paginator.num_pages }}" class="px-3 py-2 bg-gray-300 rounded-md">Último</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endblock %}
+</div>
