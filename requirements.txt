@@ -1,6 +1,6 @@
 django
 django-phonenumber-field
-pillow
 phonenumbers
+pillow
 psycopg2-binary
 qrcode
