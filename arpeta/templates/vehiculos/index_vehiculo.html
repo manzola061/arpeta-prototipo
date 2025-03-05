@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% load filtros_personalizados %}
+
+{% block titulo %}Lista de Vehículos{% endblock %}
+
+{% block contenido %}
+<div class="container mx-auto mt-8 px-4">
+    <div class="bg-white shadow-lg rounded-lg">
+        <div class="bg-gray-200 text-white rounded-t-lg px-6 py-4">
+            <center>
+                <h4 class="text-gray-900 font-serif text-3xl">Lista de Vehículos</h4>
+            </center>
+            <a class="btn bg-gray-600 text-gray-100 py-2 px-4 rounded-md shadow-md hover:bg-gray-900 transition" 
+               href="{% url 'crear_vehiculo' %}" role="button">
+                Agregar Vehículo
+            </a>
+        </div>
+        <div class="p-6">
+            <table class="table-auto w-full border-collapse">
+                <thead>
+                    <tr class="border-b-2 border-gray-300">
+                        <th class="py-2 px-4 text-left">Placa</th>
+                        <th class="py-2 px-4 text-left">Marca</th>
+                        <th class="py-2 px-4 text-left">Modelo</th>
+                        <th class="py-2 px-4 text-left">Capacidad de Carga</th>
+                        <th class="py-2 px-4 text-left">Foto</th>
+                        <th class="py-2 px-4 text-left">Código QR</th>
+                        <th class="py-2 px-4 text-left">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vehiculo in vehiculos %}
+                    <tr class="border-b border-gray-200">
+                        <td class="py-2 px-4">{{ vehiculo.placa }}</td>
+                        <td class="py-2 px-4">{{ vehiculo.modelo.marca }}</td>
+                        <td class="py-2 px-4">{{ vehiculo.modelo.nombre }}</td>
+                        <td class="py-2 px-4">{{ vehiculo.capacidad_carga|formato_decimal }} m³</td>
+                        <td class="py-2 px-4">
+                            {% if vehiculo.foto_vehiculo %}
+                                <a href="{{ vehiculo.foto_vehiculo.url }}" target="_blank">
+                                    <img src="{{ vehiculo.foto_vehiculo.url }}" alt="Foto del Vehículo" class="w-12">
+                                </a>
+                            {% else %}
+                                Foto no disponible
+                            {% endif %}
+                        </td>
+                        <td class="py-2 px-4">
+                            {% if vehiculo.codigo_qr %}
+                                <a href="{{ vehiculo.codigo_qr.url }}" target="_blank">
+                                    <img src="{{ vehiculo.codigo_qr.url }}" alt="Código QR" class="w-12">
+                                </a>
+                            {% else %}
+                                QR no disponible
+                            {% endif %}
+                        </td>
+                        <td class="py-2 px-4">
+                            <div class="flex items-center space-x-4">
+                                <a href="{% url 'descargar_qr' vehiculo.placa %}" title="Descargar QR">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
+                                        <path fill-rule="evenodd" d="M12 2.25a.75.75 0 0 1 .75.75v11.69l3.22-3.22a.75.75 0 1 1 1.06 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.22 3.22V3a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                                <a href="{% url 'editar_vehiculo' vehiculo.placa %}">
+                                    <button class="bg-sky-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                                        Editar
+                                    </button>
+                                </a>
+                                <a href="{% url 'borrar_vehiculo' vehiculo.placa %}">
+                                    <button class="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full">
+                                        Borrar
+                                    </button>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if vehiculos.has_other_pages %}
+        <div class="bg-gray-100 text-center py-4 rounded-b-lg">
+            <div class="inline-block">
+                {% if vehiculos.has_previous %}
+                    <a href="?page=1" class="px-3 py-2 bg-gray-300 rounded-md">Primero</a>
+                    <a href="?page={{ vehiculos.previous_page_number }}" class="px-3 py-2 bg-gray-300 rounded-md">Anterior</a>
+                {% endif %}
+                <span class="px-4 py-2 bg-gray-500 text-white rounded-md">
+                    Página {{ vehiculos.number }} de {{ vehiculos.paginator.num_pages }}
+                </span>
+                {% if vehiculos.has_next %}
+                    <a href="?page={{ vehiculos.next_page_number }}" class="px-3 py-2 bg-gray-300 rounded-md">Siguiente</a>
+                    <a href="?page={{ vehiculos.paginator.num_pages }}" class="px-3 py-2 bg-gray-300 rounded-md">Último</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

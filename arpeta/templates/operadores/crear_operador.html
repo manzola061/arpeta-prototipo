@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block titulo %} Agregar Operador {% endblock %}
+
+{% block contenido %}
+
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    
+    <div class="container mx-auto mt-8 px-4">
+        <div class="flex bg-white shadow-lg rounded-lg">
+            
+            <div class="w-full lg:w-1/2 p-6">
+                <div class="bg-gray-200 text-gray-900 rounded-t-lg px-6 py-4">
+                    <center><h4 class="text-2xl font-semibold">Agregar Operador</h4></center>
+                </div>
+
+                <div class="p-6">
+                    {% for campo in formulario %}
+                        <div class="mb-4">
+                            <label for="{{ campo.id_for_label }}" class="block text-lg font-medium text-gray-700">{{ campo.label }}:</label>
+
+                            {% if campo.field.widget.input_type == "checkbox" %}
+                                <div class="mt-2 flex items-center space-x-4">
+                                    <div class="flex items-center">
+                                        <input type="radio" name="{{ campo.name }}" id="{{ campo.name }}_yes" value="True" {% if campo.value == True %}checked{% endif %} class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                        <label for="{{ campo.name }}_yes" class="ml-2 text-gray-700">Si</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="radio" name="{{ campo.name }}" id="{{ campo.name }}_no" value="False" {% if campo.value == False %}checked{% endif %} class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                        <label for="{{ campo.name }}_no" class="ml-2 text-gray-700">No</label>
+                                    </div>
+                                </div>
+                            {% elif campo.label == "Dirección" %}
+                                <textarea class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        name="{{ campo.name }}"
+                                        id="{{ campo.id_for_label }}"
+                                        placeholder="{{ campo.label }}"
+                                        cols="50" rows="5"
+                                        style="resize: none;">{{ campo.value | default:'' }}</textarea>
+                            {% else %}
+                                <input type="{{ campo.field.widget.input_type }}" class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" name="{{ campo.name }}" id="{{ campo.id_for_label }}" placeholder="{{ campo.label }}" value="{{ campo.value | default:'' }}" />
+                            {% endif %}
+                        </div>
+                        <div class="col-12 text-red-500 text-sm">{{ campo.errors }}</div>
+                    {% endfor %}
+
+                    <div class="mt-6 flex justify-between">
+                        <input type="submit" class="bg-green-500 text-white px-6 py-2 rounded-lg text-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500" value="Aceptar" />
+                        <a href="{% url 'operadores' %}" class="bg-gray-500 text-white px-6 py-2 rounded-lg text-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500" role="button">Cancelar</a>
+                    </div>
+                </div>
+
+                <div class="bg-gray-100 text-center py-4 rounded-b-lg">
+                </div>
+            </div>
+
+            <div class="hidden lg:block w-1/2">
+                <div id="imagePreviewContainer" class="w-full h-full bg-gray-200 flex items-center justify-center rounded-r-lg">
+                    <span id="imagePreviewText" class="text-gray-500 text-4xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-14">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+                      </svg>
+                      </span>
+                    <img id="imagePreview" src="" alt="Foto del Operador" class="hidden w-full h-full object-cover rounded-r-lg" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}

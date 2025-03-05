@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block titulo %} Lista de Asignaciones {% endblock %}
+
+{% block contenido %}
+<div class="container mx-auto mt-8 px-4">
+    <div class="bg-white shadow-lg rounded-lg">
+        <div class="bg-gray-200 text-white rounded-t-lg px-6 py-4">
+            <center><h4 class="text-gray-900 font-serif text-3xl">Lista de Asignaciones</h4></center>
+            <a class="bg-gray-600 text-gray-100 hover:bg-gray-900 hover:text-white px-4 py-2 rounded-lg text-lg" href="{% url 'crear_asignacion' %}" role="button">Agregar Asignación</a>
+        </div>
+
+        <div class="p-6">
+            <table class="min-w-full table-auto border-collapse">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 text-left text-lg font-semibold">Operador</th>
+                        <th class="px-4 py-2 text-left text-lg font-semibold">Vehículo</th>
+                        <th class="px-4 py-2 text-left text-lg font-semibold">Fecha de Asignación</th>
+                        <th class="px-4 py-2 text-left text-lg font-semibold">Tipo de Material</th>
+                        <th class="px-4 py-2 text-left text-lg font-semibold">Total de Vueltas</th>
+                        <th class="px-4 py-2 text-left text-lg font-semibold">Total de Material</th>
+                        <th class="px-4 py-2 text-left text-lg font-semibold">Estado</th>
+                        <th class="px-4 py-2 text-left text-lg font-semibold">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for asignacion in asignaciones %}
+                    <tr class="border-t">
+                        <td class="px-4 py-2">{{ asignacion.operador.nombre }} {{ asignacion.operador.apellido }}</td>
+                        <td class="px-4 py-2">{{ asignacion.vehiculo.modelo }}</td>
+                        <td class="px-4 py-2">{{ asignacion.fecha_formateada }}</td>
+                        <td class="px-4 py-2">{{ asignacion.tipo_material }}</td>
+                        <td class="px-4 py-2">{{ asignacion.total_vueltas }}</td>
+                        <td class="px-4 py-2">{{ asignacion.total_material }}  m</td>
+                        <td class="px-4 py-2">{{ asignacion.estado_texto }}</td>
+                        <td class="px-4 py-2">
+                            <a href="{% url 'editar_asignacion' asignacion.id %}">
+                                <button class="bg-sky-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                                    Editar
+                                  </button>
+                              </a>
+                              <a href="{% url 'borrar_asignacion' asignacion.id %}">
+                                <button class="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full">
+                                    Borrar
+                                  </button>
+                              </a>
+                             
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if asignaciones.has_other_pages %}
+            <div class="bg-gray-100 text-center py-4 rounded-b-lg">
+                <div class="inline-block">
+                    {% if asignaciones.has_previous %}
+                        <a href="?page=1" class="px-3 py-2 bg-gray-300 rounded-md">Primero</a>
+                        <a href="?page={{ asignaciones.previous_page_number }}" class="px-3 py-2 bg-gray-300 rounded-md">Anterior</a>
+                    {% endif %}
+                    <span class="px-4 py-2 bg-gray-500 text-white rounded-md">
+                        Página {{ asignaciones.number }} de {{ asignaciones.paginator.num_pages }}
+                    </span>
+                    {% if asignaciones.has_next %}
+                        <a href="?page={{ asignaciones.next_page_number }}" class="px-3 py-2 bg-gray-300 rounded-md">Siguiente</a>
+                        <a href="?page={{ asignaciones.paginator.num_pages }}" class="px-3 py-2 bg-gray-300 rounded-md">Último</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        <div class="bg-gray-100 text-center py-4 rounded-b-lg">
+        </div>
+    </div>
+</div>
+
+<input type="text" id="qrInput" style="opacity: 0; position: absolute; left: -9999px;" autofocus>
+
+{% endblock %}

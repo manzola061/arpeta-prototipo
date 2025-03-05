@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Iniciar Sesión</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <style>
+        </style>
+    </head>
+
+    <body class="h-screen bg-gray-100 flex justify-center items-center">
+        <div class="w-full max-w-2xl bg-sky-700 p-8 rounded-xl shadow-lg">
+            <h1 class="text-center text-5xl text-gray-100 font-bold mb-6">ARPETA</h1>
+            <h2 class="text-center text-2xl text-gray-100 mb-4">Iniciar Sesión</h2>
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <div>
+                    <input type="email" name="username" class="w-full p-4 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Correo Electrónico">
+                </div>
+
+                <div>
+                    <input type="password" name="password" class="w-full p-4 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contraseña" value="{{ form.password.value|default:'' }}">
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-green-600 text-white text-lg font-semibold rounded-lg hover:bg-green-800 transition">Iniciar sesión</button>
+            </form>
+
+            {% if messages %}
+                <div class="mt-4">
+                    {% for message in messages %}
+                        <div class="alert alert-danger text-red-500">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </body>
+</html>

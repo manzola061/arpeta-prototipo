@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block titulo %} Editar Asginación {% endblock %}
+
+{% block contenido %}
+
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+
+    <div class="container mx-auto mt-8 px-4">
+        <div class="flex bg-white shadow-lg rounded-lg">
+            
+            <div class="w-full lg:w-1/2 p-6">
+                <div class="bg-gray-200 text-gray-800 rounded-t-lg px-6 py-4">
+                    <center><h4 class="text-2xl font-semibold">Editar Asignación</h4></center>
+                </div>
+
+                <div class="p-6">
+                    {% for campo in formulario %}
+                        {% if campo.name == "operador" or campo.name == "vehiculo" %}
+                            <input type="hidden" name="{{ campo.name }}" id="{{ campo.id_for_label }}" value="{{ campo.value | default:'' }}" />
+                        {% else %}
+                            <div class="mb-4">
+                                <label for="{{ campo.id_for_label }}" class="block text-lg font-medium text-gray-700">{{ campo.label }}:</label>
+
+                                {% if campo.field.widget.input_type == "checkbox" %}
+                                    <div class="mt-2">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="{{ campo.name }}" id="{{ campo.name }}_yes" value="True" {% if campo.value == True %}checked{% endif %} class="form-radio text-blue-600">
+                                            <span class="ml-2">Activo</span>
+                                        </label>
+                                        <label class="inline-flex items-center ml-6">
+                                            <input type="radio" name="{{ campo.name }}" id="{{ campo.name }}_no" value="False" {% if campo.value == False %}checked{% endif %} class="form-radio text-blue-600">
+                                            <span class="ml-2">Inactivo</span>
+                                        </label>
+                                    </div>
+                                {% elif campo.field.widget.input_type == "select" %}
+                                    <select class="form-select mt-2 block w-full px-4 py-2 text-lg border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" name="{{ campo.name }}" id="{{ campo.id_for_label }}">
+                                        {% for opcion in campo.field.choices %}
+                                            <option value="{{ opcion.0 }}" {% if opcion.0 == campo.value %}selected{% endif %}>
+                                                {{ opcion.1 }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <input type="{{ campo.field.widget.input_type }}" class="mt-2 block w-full px-4 py-2 text-lg border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" name="{{ campo.name }}" id="{{ campo.id_for_label }}" placeholder="{{ campo.label }}" value="{{ campo.value | default:'' }}" />
+                                {% endif %}
+                            </div>
+                            <div class="text-red-500 text-sm">{{ campo.errors }}</div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <div class="flex justify-between mt-4">
+                        <input type="submit" class="bg-green-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-green-700" value="Aceptar" />
+                        <a href="{% url 'asignaciones' %}" class="bg-red-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-red-800" role="button">Cancelar</a>
+                    </div>
+                </div>
+
+                <div class="bg-gray-100 text-center py-4 rounded-b-lg">
+                </div>
+            </div>
+
+            <div class="hidden lg:block w-1/2">
+                <div class="w-full h-full bg-gray-200 flex items-center justify-center rounded-r-lg">
+                    {% if form.instance.camion and form.instance.camion.image %}
+                        <img src="{{ form.instance.camion.image.url }}" alt="Imagen del camión" class="w-full h-full object-cover rounded-r-lg">
+                    {% else %}
+                        <span class="text-gray-500 text-4xl">  No se ha cargado imagen del camión</span>
+                    {% endif %}
+                    
+                    {% if form.instance.camionero and form.instance.camionero.image %}
+                        <img src="{{ form.instance.camionero.image.url }}" alt="Imagen del camionero" class="w-full h-full object-cover rounded-r-lg mt-4">
+                    {% else %}
+                        <span class="text-gray-500 text-4xl mt-4">No se ha cargado imagen del camionero</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}
