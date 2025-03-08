@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
@@ -10,6 +10,7 @@ from .models import Operador, Vehiculo, TipoMaterial, Asignacion
 from .forms import OperadorForm, VehiculoForm, AsignacionForm
 import os
 import json
+from django.utils import timezone
 
 
 def login_view(request):
@@ -19,7 +20,6 @@ def login_view(request):
             email = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(request, username=email, password=password)
-
             if user is not None:
                 login(request, user)
                 return redirect('inicio')
@@ -29,7 +29,6 @@ def login_view(request):
             messages.error(request, "Correo o contraseña incorrectos.")
     else:
         form = AuthenticationForm()
-
     return render(request, 'login.html', {'form': form})
 
 
@@ -46,7 +45,7 @@ def inicio(request):
 @login_required
 def operadores(request):
     operadores = Operador.objects.all().order_by('nombre')
-    paginator = Paginator(operadores, 2)
+    paginator = Paginator(operadores, 1)
     page_number = request.GET.get('page')
     operadores = paginator.get_page(page_number)
     return render(request, 'operadores/index_operador.html', {'operadores': operadores})
@@ -84,7 +83,7 @@ def borrar_operador(request, cedula):
 @login_required
 def vehiculos(request):
     vehiculos = Vehiculo.objects.all().order_by('modelo')
-    paginator = Paginator(vehiculos, 2)
+    paginator = Paginator(vehiculos, 1)
     page_number = request.GET.get('page')
     vehiculos = paginator.get_page(page_number)
     return render(request, 'vehiculos/index_vehiculo.html', {'vehiculos': vehiculos})
@@ -132,7 +131,7 @@ def descargar_qr(request, placa):
 @login_required
 def asignaciones(request):
     asignaciones = Asignacion.objects.all().order_by('id')
-    paginator = Paginator(asignaciones, 2)
+    paginator = Paginator(asignaciones, 1)
     page_number = request.GET.get('page')
     asignaciones = paginator.get_page(page_number)
     return render(request, 'asignaciones/index_asignacion.html', {'asignaciones': asignaciones})
@@ -140,27 +139,23 @@ def asignaciones(request):
 
 @login_required
 def crear_asignacion(request):
-    formulario = AsignacionForm(request.POST or None)
-    if formulario.is_valid():
-        formulario.save()
-        return redirect('asignaciones')
+    if request.method == 'POST':
+        formulario = AsignacionForm(request.POST)
+        if formulario.is_valid():
+            asignacion = formulario.save(commit=False)
+            asignacion.fecha_asignacion = timezone.localtime(timezone.now()).date()
+            asignacion.save()
+            return redirect('asignaciones')
+    else:
+        formulario = AsignacionForm()
     return render(request, 'asignaciones/crear_asignacion.html', {'formulario': formulario})
 
 
 @login_required
-def editar_asignacion(request, id):
-    asignacion = Asignacion.objects.get(id=id)
-    formulario = AsignacionForm(request.POST or None, instance=asignacion)
-    if formulario.is_valid() and request.POST:
-        formulario.save()
-        return redirect('asignaciones')
-    return render(request, 'asignaciones/editar_asignacion.html', {'formulario': formulario})
-
-
-@login_required
-def borrar_asignacion(request, id):
-    asignacion = Asignacion.objects.get(id=id)
-    asignacion.delete()
+def cambiar_estado(request, id):
+    asignacion = get_object_or_404(Asignacion, id=id)
+    asignacion.estado = not asignacion.estado
+    asignacion.save()
     return redirect('asignaciones')
 
 
@@ -170,7 +165,7 @@ def crear_tipo_material(request):
         data = json.loads(request.body)
         nombre = data.get("nombre", "").strip()
         if nombre:
-            material, created = TipoMaterial.objects.get_or_create(nombre=nombre)
+            material, creado = TipoMaterial.objects.get_or_create(nombre=nombre)
             return JsonResponse({"success": True, "id": material.id, "nombre": material.nombre})
     return JsonResponse({"success": False})
 
@@ -181,25 +176,19 @@ def registrar_vuelta(request):
         try:
             data = json.loads(request.body)
             placa = data.get("placa")
-
             vehiculo = Vehiculo.objects.get(placa=placa)
-
             relacion = Asignacion.objects.get(vehiculo=vehiculo)
-
             relacion.total_vueltas += 1
             relacion.total_material = relacion.total_vueltas * vehiculo.capacidad_carga
             relacion.save()
-
             return JsonResponse({
                 "message": "Vuelta registrada con exito",
                 "total_vueltas": relacion.total_vueltas
             }, status=200)
-
         except Vehiculo.DoesNotExist:
             return JsonResponse({"error": "Vehiculo no encontrado"}, status=404)
         except Asignacion.DoesNotExist:
             return JsonResponse({"error": "No hay un operador asignado a este vehiculo"}, status=404)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
-
     return JsonResponse({"error": "Metodo no permitido"}, status=405)

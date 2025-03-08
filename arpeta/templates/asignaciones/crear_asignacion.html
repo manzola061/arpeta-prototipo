@@ -39,7 +39,7 @@
 
                             {% if campo.name == "tipo_material" %}
                                 <button type="button" id="btnNuevoMaterial" class="absolute top-2 right-2 bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-700">
-                                    + Nuevo Material
+                                    <i class="fa-solid fa-plus"></i>
                                 </button>
                             {% endif %}
                         </div>
@@ -70,5 +70,67 @@
         </div>
     </div>
 </div>
+
+<script>
+    const btnNuevoMaterial = document.getElementById('btnNuevoMaterial');
+    const modalMaterial = document.getElementById('modalMaterial');
+    const btnCerrarModal = document.getElementById('btnCerrarModal');
+    const btnGuardarMaterial = document.getElementById('btnGuardarMaterial');
+    const inputNuevoMaterial = document.getElementById('nuevoMaterial');
+
+    btnNuevoMaterial.addEventListener('click', () => {
+        modalMaterial.classList.remove('hidden');
+    });
+
+    btnCerrarModal.addEventListener('click', () => {
+        modalMaterial.classList.add('hidden');
+    });
+
+    modalMaterial.addEventListener('click', (event) => {
+        if (event.target === modalMaterial) {
+            modalMaterial.classList.add('hidden');
+        }
+    });
+
+    btnGuardarMaterial.addEventListener('click', async () => {
+        const nombreMaterial = inputNuevoMaterial.value.trim();
+
+        if (!nombreMaterial) {
+            alert('Por favor, ingrese el nombre del material.');
+            return;
+        }
+
+        try {
+            const response = await fetch("{% url 'crear_tipo_material' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({ nombre: nombreMaterial }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                modalMaterial.classList.add('hidden');
+                inputNuevoMaterial.value = '';
+
+                const selectMaterial = document.querySelector('select[name="tipo_material"]');
+                if (selectMaterial) {
+                    const option = document.createElement('option');
+                    option.value = data.id;
+                    option.textContent = data.nombre;
+                    selectMaterial.appendChild(option);
+                    selectMaterial.value = data.id;
+                }
+
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al conectar con el servidor.');
+        }
+    });
+</script>
 
 {% endblock %}

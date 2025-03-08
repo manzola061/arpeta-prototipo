@@ -14,7 +14,4 @@ class VehiculoForm(forms.ModelForm):
 class AsignacionForm(forms.ModelForm):
     class Meta:
         model = Asignacion
-        fields = '__all__'
-        widgets = {
-            'fecha_asignacion': forms.DateInput(attrs={'type': 'date'}),
-        }
+        exclude = ['fecha_asignacion', 'total_vueltas', 'total_material', 'estado']

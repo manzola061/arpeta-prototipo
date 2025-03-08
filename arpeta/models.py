@@ -91,8 +91,8 @@ class Asignacion(models.Model):
     vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE, verbose_name='Vehículo')
     fecha_asignacion = models.DateField(verbose_name='Fecha de Asignación')
     tipo_material = models.ForeignKey(TipoMaterial, on_delete=models.CASCADE, verbose_name="Tipo de Material", null=True, blank=True)
-    total_vueltas = models.IntegerField(default=0, editable=False, verbose_name="Total de Vueltas")
-    total_material = models.DecimalField(decimal_places=2, default=0.00, editable=False, max_digits=6, verbose_name='Total de Material (m³)')
+    total_vueltas = models.IntegerField(default=0, verbose_name="Total de Vueltas")
+    total_material = models.DecimalField(decimal_places=2, default=0.00, max_digits=6, verbose_name='Total de Material (m³)')
     estado = models.BooleanField(default=True, verbose_name='Estado')
 
     class Meta:

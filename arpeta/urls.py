@@ -20,8 +20,7 @@ urlpatterns = [
 
     path('asignaciones', views.asignaciones, name='asignaciones'),
     path('asignaciones/crear_asignacion', views.crear_asignacion, name='crear_asignacion'),
-    path('asignaciones/editar_asignacion/<int:id>/', views.editar_asignacion, name='editar_asignacion'),
-    path('asignaciones/borrar_asignacion/<int:id>/', views.borrar_asignacion, name='borrar_asignacion'),
+    path('cambiar_estado/<int:id>/', views.cambiar_estado, name='cambiar_estado'),
     path("crear_tipo_material/", views.crear_tipo_material, name="crear_tipo_material"),
     path("registrar_vuelta/", views.registrar_vuelta, name="registrar_vuelta")
 ]
