@@ -6,84 +6,123 @@
 
 <div class="flex-1 p-6">
     <div class="container mx-auto mt-8 px-4">
-        <div class="bg-white shadow-lg rounded-lg">
-            <div class="bg-gray-200 text-white rounded-t-lg px-6 py-4">
-                <h4 class="text-gray-900 font-serif text-3xl text-center">Lista de Operadores</h4>
-                <a href="{% url 'crear_operador' %}">
-                    <button class="bg-gray-600 text-gray-100 hover:bg-gray-900 hover:text-white px-4 py-2 rounded-lg text-lg">
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <!-- Encabezado -->
+            <div class="bg-sky-900 text-white px-6 py-4">
+                <h4 class="text-3xl font-serif text-center">Lista de Operadores</h4>
+                <div class="text-center mt-4">
+                    <a href="{% url 'crear_operador' %}" class="bg-white text-sky-900 hover:bg-gray-100 px-6 py-2 rounded-lg text-lg transition duration-300">
                         Agregar Operador
-                    </button>
-                </a>
+                    </a>
+                </div>
             </div>
-            <div class="p-6">
+
+            <!-- Tabla de Operadores -->
+            <div class="p-6 overflow-x-auto">
                 <table class="min-w-full table-auto border-collapse">
                     <thead>
-                        <tr class="border-b-2 border-gray-300">
-                            <th class="py-2 px-4 text-left">Cédula</th>
-                            <th class="py-2 px-4 text-left">Nombre</th>
-                            <th class="py-2 px-4 text-left">Apellido</th>
-                            <th class="py-2 px-4 text-left">Teléfono</th>
-                            <th class="py-2 px-4 text-left">Correo Electrónico</th>
-                            <th class="py-2 px-4 text-left">Dirección</th>
-                            <th class="py-2 px-4 text-left">Autónomo</th>
-                            <th class="py-2 px-4 text-left">Foto</th>
-                            <th class="py-2 px-4 text-left">Acciones</th>
+                        <tr class="bg-gray-100">
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Cédula</th>
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Nombre</th>
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Apellido</th>
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Teléfono</th>
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for operador in operadores %}
-                        <tr class="border-b border-gray-200">
-                            <td class="py-2 px-4">{{ operador.cedula }}</td>
-                            <td class="py-2 px-4">{{ operador.nombre }}</td>
-                            <td class="py-2 px-4">{{ operador.apellido }}</td>
-                            <td class="py-2 px-4">{{ operador.telefono }}</td>
-                            <td class="py-2 px-4">{{ operador.correo }}</td>
-                            <td class="py-2 px-4">{{ operador.direccion }}</td>
-                            <td class="py-2 px-4">{{ operador.autonomo_texto }}</td>
-                            <td class="py-2 px-4">
-                                {% if operador.foto_operador %}
-                                    <a href="{{ operador.foto_operador.url }}" target="_blank">
-                                        <img src="{{ operador.foto_operador.url }}" alt="Foto del Operador" class="w-12">
+                        <tr class="border-b border-gray-200 hover:bg-gray-50 transition duration-200">
+                            <td class="py-3 px-4 text-center">{{ operador.cedula }}</td>
+                            <td class="py-3 px-4 text-center">{{ operador.nombre }}</td>
+                            <td class="py-3 px-4 text-center">{{ operador.apellido }}</td>
+                            <td class="py-3 px-4 text-center">{{ operador.telefono }}</td>
+                            <td class="py-3 px-4 text-center">
+                                <div class="flex justify-center space-x-2">
+                                    <!-- Botón para ver detalles -->
+                                    <button onclick="mostrarDetalles('{{ operador.cedula }}')" class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg transition duration-300" title="Ver Detalles">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <a href="{% url 'editar_operador' operador.cedula %}" title="Editar">
+                                        <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition duration-300">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
                                     </a>
-                                {% else %}
-                                    <span class="text-gray-500 italic">Foto no disponible</span>
-                                {% endif %}
-                            </td>
-                            <td class="py-2 px-4">
-                                <a href="{% url 'editar_operador' operador.cedula %}">
-                                    <button class="bg-sky-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-                                        Editar
-                                    </button>
-                                </a>
-                                <a href="{% url 'borrar_operador' operador.cedula %}">
-                                    <button class="bg-red-600 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-full">
-                                        Borrar
-                                    </button>
-                                </a>
+                                    <a href="{% url 'borrar_operador' operador.cedula %}" title="Borrar">
+                                        <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-300">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
+
+            <!-- Paginación -->
             {% if operadores.has_other_pages %}
-            <div class="bg-gray-100 text-center py-4 rounded-b-lg">
-                <div class="inline-block">
+            <div class="bg-gray-100 text-center py-4">
+                <div class="inline-flex space-x-2">
                     {% if operadores.has_previous %}
-                        <a href="?page=1" class="px-3 py-2 bg-gray-300 rounded-md">Primero</a>
-                        <a href="?page={{ operadores.previous_page_number }}" class="px-3 py-2 bg-gray-300 rounded-md">Anterior</a>
+                        <a href="?page=1" class="px-4 py-2 bg-white text-sky-900 rounded-lg hover:bg-gray-100 transition duration-300">Primero</a>
+                        <a href="?page={{ operadores.previous_page_number }}" class="px-4 py-2 bg-white text-sky-900 rounded-lg hover:bg-gray-100 transition duration-300">Anterior</a>
                     {% endif %}
-                    <span class="px-4 py-2 bg-gray-500 text-white rounded-md">
+                    <span class="px-4 py-2 bg-sky-900 text-white rounded-lg">
                         Página {{ operadores.number }} de {{ operadores.paginator.num_pages }}
                     </span>
                     {% if operadores.has_next %}
-                        <a href="?page={{ operadores.next_page_number }}" class="px-3 py-2 bg-gray-300 rounded-md">Siguiente</a>
-                        <a href="?page={{ operadores.paginator.num_pages }}" class="px-3 py-2 bg-gray-300 rounded-md">Último</a>
+                        <a href="?page={{ operadores.next_page_number }}" class="px-4 py-2 bg-white text-sky-900 rounded-lg hover:bg-gray-100 transition duration-300">Siguiente</a>
+                        <a href="?page={{ operadores.paginator.num_pages }}" class="px-4 py-2 bg-white text-sky-900 rounded-lg hover:bg-gray-100 transition duration-300">Último</a>
                     {% endif %}
                 </div>
             </div>
             {% endif %}
         </div>
     </div>
-    {% endblock %}
 </div>
+
+<!-- Ventana emergente para detalles -->
+<div id="modal-detalles" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-2xl font-semibold">Detalles del Operador</h3>
+            <button onclick="cerrarDetalles()" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+        <div id="detalles-contenido" class="space-y-4">
+            <!-- Aquí se cargarán los detalles dinámicamente -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // Función para mostrar detalles del operador
+    function mostrarDetalles(cedula) {
+        fetch(`/operadores/detalles/${cedula}/`)  // Ajusta la URL según tu configuración
+            .then(response => response.json())
+            .then(data => {
+                const contenido = `
+                    <p><strong>Cédula:</strong> ${data.cedula}</p>
+                    <p><strong>Nombre:</strong> ${data.nombre}</p>
+                    <p><strong>Apellido:</strong> ${data.apellido}</p>
+                    <p><strong>Teléfono:</strong> ${data.telefono}</p>
+                    <p><strong>Correo:</strong> ${data.correo}</p>
+                    <p><strong>Dirección:</strong> ${data.direccion}</p>
+                    <p><strong>Independiente:</strong> ${data.independiente_texto}</p>
+                    <p><strong>Foto:</strong> ${data.foto_operador ? `<img src="${data.foto_operador}" alt="Foto" class="w-12 h-12 rounded-full">` : 'Sin foto'}</p>
+                `;
+                document.getElementById('detalles-contenido').innerHTML = contenido;
+                document.getElementById('modal-detalles').classList.remove('hidden');
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Función para cerrar la ventana emergente
+    function cerrarDetalles() {
+        document.getElementById('modal-detalles').classList.add('hidden');
+    }
+</script>
+
+{% endblock %}

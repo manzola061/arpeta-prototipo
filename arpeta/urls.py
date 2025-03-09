@@ -22,5 +22,8 @@ urlpatterns = [
     path('asignaciones/crear_asignacion', views.crear_asignacion, name='crear_asignacion'),
     path('cambiar_estado/<int:id>/', views.cambiar_estado, name='cambiar_estado'),
     path("crear_tipo_material/", views.crear_tipo_material, name="crear_tipo_material"),
-    path("registrar_vuelta/", views.registrar_vuelta, name="registrar_vuelta")
+    path("registrar_vuelta/", views.registrar_vuelta, name="registrar_vuelta"),
+    
+    # Nuevo
+    path('operadores/detalles/<str:cedula>/', views.detalles_operador, name='detalles_operador'),
 ]

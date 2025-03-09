@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'sistema.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'arpeta',
+        'NAME': 'arpeta_db',
         'USER': 'postgres',
         'PASSWORD': 'mia2712',
         'HOST': 'localhost',
@@ -122,7 +122,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-LOGIN_URL = '/login/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -130,10 +129,16 @@ LOGIN_URL = '/login/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# Archivos multimedia (archivos subidos como imágenes, videos, etc.)
+
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
+
+# Configuraciones de autenticación
+
+LOGIN_URL = '/login/'
 
 AUTHENTICATION_BACKENDS = [
     'arpeta.backends.EmailAuthBackend',

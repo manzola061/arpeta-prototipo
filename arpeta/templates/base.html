@@ -1,111 +1,53 @@
 {% load static %}
+
 <!doctype html>
 <html lang="es">
-
 <head>
-    <title>{% block titulo %} {% endblock %}</title>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block titulo %}{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/5f79b4d054.js" crossorigin="anonymous"></script>
 </head>
-
 <body class="bg-gray-100">
-    <nav class="bg-sky-900 shadow-md">
-        <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-            <div class="relative flex items-center justify-between h-16">
-                <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                    <button type="button"
-                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        aria-controls="mobile-menu" aria-expanded="false">
-                        <span class="sr-only">Open main menu</span>
-                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-                    <a href="{% url 'inicio' %}" class="text-3xl font-bold text-gray-50">ARPETA</a>
-                </div>
-                <a href="{% url 'logout' %}" title="Cerrar sesión">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" stroke="white"/>
-                    </svg>
-                </a>
-                    </div>
-                </div>
-            </div>
+    <nav class="bg-sky-900 shadow-md py-4 fixed top-0 left-0 w-full z-10">
+        <div class="max-w-7xl mx-auto flex justify-between items-center px-6">
+            <a href="{% url 'inicio' %}" class="text-3xl font-bold text-white">ARPETA</a>
+            <a href="#" title="Usuario" class="text-white hover:text-gray-300">
+                <i class="fa-solid fa-circle-user text-3xl"></i>
+            </a>
+            <a href="{% url 'logout' %}" title="Cerrar sesión" class="text-white hover:text-gray-300">
+                <i class="fa-solid fa-right-from-bracket text-3xl"></i>
+            </a>
         </div>
     </nav>
 
-    <div class="flex h-screen">
-        <!-- Barra Lateral -->
-        <div class="bg-sky-900 text-white w-30 p-6">
-            <center><h2 class="text-2xl font-semibold mb-6">Menu</h2></center>
-            <ul>
-                <!-- Home -->
-                <li class="mb-16">
-                    <a href="{% url 'inicio' %}" class="flex flex-col items-center text-lg hover:text-gray-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" 
-                        viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-
-                        linecap="round" stroke-linejoin="round"><line x1="4" 
-                        x2="20" y1="12" y2="12"></line><line x1="4" x2="20" 
-                        y1="6" y2="6"></line><line x1="4" x2="20" y1="18" 
-                        y2="18"></line></svg>
-                        Inicio
-                    </a>
-                </li>
+    <div class="flex h-screen pt-16">
+        <aside class="bg-sky-900 text-white w-40 flex flex-col items-center py-6 h-full">
+            <h2 class="text-2xl font-semibold mb-6">Menú</h2>
+            <nav class="flex-1 w-full flex flex-col justify-between">
+                <a href="{% url 'inicio' %}" class="flex flex-col items-center justify-center h-full text-xl hover:text-gray-300">
+                    <i class="fas fa-home text-3xl"></i>
+                    <span>Inicio</span>
+                </a>
+                <a href="{% url 'operadores' %}" class="flex flex-col items-center justify-center h-full text-xl hover:text-gray-300">
+                    <i class="fas fa-users text-3xl"></i>
+                    <span>Operadores</span>
+                </a>
+                <a href="{% url 'vehiculos' %}" class="flex flex-col items-center justify-center h-full text-xl hover:text-gray-300">
+                    <i class="fas fa-truck text-3xl"></i>
+                    <span>Vehículos</span>
+                </a>
+                <a href="{% url 'asignaciones' %}" class="flex flex-col items-center justify-center h-full text-xl hover:text-gray-300">
+                    <i class="fas fa-tasks text-3xl"></i>
+                    <span>Asignaciones</span>
+                </a>
+            </nav>
+        </aside>
 
-                <!-- Camionero -->
-                <li class="mb-16">
-                    <a href="{% url 'operadores' %}" class="flex flex-col items-center text-lg hover:text-gray-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" 
-                        viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" 
-                        stroke-linecap="round" stroke-linejoin="round">
-                       <circle cx="12" cy="5" r="1"></circle>
-                       <path d="m9 20 3-6 3 6"></path>
-                       <path d="m6 8 6 2 6-2"></path>
-                       <path d="M12 10v4"></path>
-                   </svg>
-                   
-                   Operadores
-                    </a>
-                </li>
-
-                <!-- Camión -->
-                <li class="mb-16">
-                    <a href="{% url 'vehiculos' %}" class="flex flex-col items-center text-lg hover:text-gray-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" 
-                        viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" 
-                        stroke-linecap="round" stroke-linejoin="round">
-                       <path d="M1 11h4l1 9h12l1-9h4M5 15V9h14v6" />
-                   </svg>
-                   
-                        Vehículos
-                    </a>
-                </li>
-
-                <!-- Asignaciones -->
-                <li class="mb-16">
-                    <a href="{% url 'asignaciones' %}" class="flex flex-col items-center text-lg hover:text-gray-400">
-                        <svg class="h-8 w-8 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 17v5H7a2 2 0 01-2-2v-5h4zm6 0v5h-4v-5h4zm-6-4v-3h4v3h-4zm0-4v-3h4v3h-4z" />
-                        </svg>
-                        Asignaciones
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Contenido Principal -->
-        <div class="flex-1 p-6">
-            {% block contenido %}
-            {% endblock %}
-        </div>
+        <main class="flex-1 p-6 overflow-auto">
+            {% block contenido %}{% endblock %}
+        </main>
     </div>
 </body>
-
 </html>

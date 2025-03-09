@@ -3,66 +3,74 @@
 {% block titulo %} Lista de Asignaciones {% endblock %}
 
 {% block contenido %}
-<div class="container mx-auto mt-8 px-4">
-    <div class="bg-white shadow-lg rounded-lg">
-        <div class="bg-gray-200 text-white rounded-t-lg px-6 py-4">
-            <center><h4 class="text-gray-900 font-serif text-3xl">Lista de Asignaciones</h4></center>
-            <a class="bg-gray-600 text-gray-100 hover:bg-gray-900 hover:text-white px-4 py-2 rounded-lg text-lg" href="{% url 'crear_asignacion' %}" role="button">Agregar Asignación</a>
-        </div>
+<div class="flex-1 p-6">
+    <div class="container mx-auto mt-8 px-4">
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <!-- Encabezado -->
+            <div class="bg-sky-900 text-white px-6 py-4">
+                <h4 class="text-3xl font-serif text-center">Lista de Asignaciones</h4>
+                <div class="text-center mt-4">
+                    <a href="{% url 'crear_asignacion' %}" class="bg-white text-sky-900 hover:bg-gray-100 px-6 py-2 rounded-lg text-lg transition duration-300">
+                        Agregar Asignación
+                    </a>
+                </div>
+            </div>
 
-        <div class="p-6">
-            <table class="min-w-full table-auto border-collapse">
-                <thead>
-                    <tr>
-                        <th class="px-4 py-2 text-left text-lg font-semibold">Operador</th>
-                        <th class="px-4 py-2 text-left text-lg font-semibold">Vehículo</th>
-                        <th class="px-4 py-2 text-left text-lg font-semibold">Fecha de Asignación</th>
-                        <th class="px-4 py-2 text-left text-lg font-semibold">Tipo de Material</th>
-                        <th class="px-4 py-2 text-left text-lg font-semibold">Total de Vueltas</th>
-                        <th class="px-4 py-2 text-left text-lg font-semibold">Total de Material</th>
-                        <th class="px-4 py-2 text-left text-lg font-semibold">Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for asignacion in asignaciones %}
-                    <tr class="border-t">
-                        <td class="px-4 py-2">{{ asignacion.operador.nombre }} {{ asignacion.operador.apellido }}</td>
-                        <td class="px-4 py-2">{{ asignacion.vehiculo.modelo }}</td>
-                        <td class="px-4 py-2">{{ asignacion.fecha_formateada }}</td>
-                        <td class="px-4 py-2">{{ asignacion.tipo_material }}</td>
-                        <td class="px-4 py-2">{{ asignacion.total_vueltas }}</td>
-                        <td class="px-4 py-2">{{ asignacion.total_material }}  m</td>
-                        <td class="px-4 py-2">
-                            <form action="{% url 'cambiar_estado' asignacion.id %}" method="post" style="display: inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="px-4 py-2 rounded-md text-white {% if asignacion.estado %}bg-green-500{% else %}bg-red-500{% endif %}">
-                                    {% if asignacion.estado %}Activo{% else %}Inactivo{% endif %}
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% if asignaciones.has_other_pages %}
-            <div class="bg-gray-100 text-center py-4 rounded-b-lg">
-                <div class="inline-block">
+            <!-- Tabla de Asignaciones -->
+            <div class="p-6 overflow-x-auto">
+                <table class="min-w-full table-auto border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Operador</th>
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Vehículo</th>
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Fecha de Asignación</th>
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Tipo de Material</th>
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Total de Vueltas</th>
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Total de Material</th>
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for asignacion in asignaciones %}
+                        <tr class="border-b border-gray-200 hover:bg-gray-50 transition duration-200">
+                            <td class="py-3 px-4 text-center">{{ asignacion.operador.nombre }} {{ asignacion.operador.apellido }}</td>
+                            <td class="py-3 px-4 text-center">{{ asignacion.vehiculo.modelo }}</td>
+                            <td class="py-3 px-4 text-center">{{ asignacion.fecha_formateada }}</td>
+                            <td class="py-3 px-4 text-center">{{ asignacion.tipo_material }}</td>
+                            <td class="py-3 px-4 text-center">{{ asignacion.total_vueltas }}</td>
+                            <td class="py-3 px-4 text-center">{{ asignacion.total_material }} m</td>
+                            <td class="py-3 px-4 text-center">
+                                <form action="{% url 'cambiar_estado' asignacion.id %}" method="post" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="px-4 py-2 rounded-lg text-white transition duration-300 {% if asignacion.estado %}bg-green-500 hover:bg-green-600{% else %}bg-red-500 hover:bg-red-600{% endif %}">
+                                        {% if asignacion.estado %}Activo{% else %}Inactivo{% endif %}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            {% if asignaciones.has_other_pages %}
+            <div class="bg-gray-100 text-center py-4">
+                <div class="inline-flex space-x-2">
                     {% if asignaciones.has_previous %}
-                        <a href="?page=1" class="px-3 py-2 bg-gray-300 rounded-md">Primero</a>
-                        <a href="?page={{ asignaciones.previous_page_number }}" class="px-3 py-2 bg-gray-300 rounded-md">Anterior</a>
+                        <a href="?page=1" class="px-4 py-2 bg-white text-sky-900 rounded-lg hover:bg-gray-100 transition duration-300">Primero</a>
+                        <a href="?page={{ asignaciones.previous_page_number }}" class="px-4 py-2 bg-white text-sky-900 rounded-lg hover:bg-gray-100 transition duration-300">Anterior</a>
                     {% endif %}
-                    <span class="px-4 py-2 bg-gray-500 text-white rounded-md">
+                    <span class="px-4 py-2 bg-sky-900 text-white rounded-lg">
                         Página {{ asignaciones.number }} de {{ asignaciones.paginator.num_pages }}
                     </span>
                     {% if asignaciones.has_next %}
-                        <a href="?page={{ asignaciones.next_page_number }}" class="px-3 py-2 bg-gray-300 rounded-md">Siguiente</a>
-                        <a href="?page={{ asignaciones.paginator.num_pages }}" class="px-3 py-2 bg-gray-300 rounded-md">Último</a>
+                        <a href="?page={{ asignaciones.next_page_number }}" class="px-4 py-2 bg-white text-sky-900 rounded-lg hover:bg-gray-100 transition duration-300">Siguiente</a>
+                        <a href="?page={{ asignaciones.paginator.num_pages }}" class="px-4 py-2 bg-white text-sky-900 rounded-lg hover:bg-gray-100 transition duration-300">Último</a>
                     {% endif %}
                 </div>
             </div>
             {% endif %}
-        <div class="bg-gray-100 text-center py-4 rounded-b-lg">
         </div>
     </div>
 </div>
