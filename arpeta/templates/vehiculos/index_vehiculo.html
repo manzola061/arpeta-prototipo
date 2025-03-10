@@ -49,13 +49,9 @@
                                 {% endif %}
                             </td>
                             <td class="py-3 px-4 text-center">
-                                {% if vehiculo.codigo_qr %}
-                                    <a href="{{ vehiculo.codigo_qr.url }}" target="_blank">
-                                        <img src="{{ vehiculo.codigo_qr.url }}" alt="Código QR" class="w-12 h-12 object-cover rounded-full">
-                                    </a>
-                                {% else %}
-                                    <span class="text-gray-500 italic">QR no disponible</span>
-                                {% endif %}
+                                <a href="{% url 'descargar_qr' vehiculo.placa %}" target="_blank">
+                                    <img src="{% url 'descargar_qr' vehiculo.placa %}" alt="Código QR" class="w-12 h-12 object-cover rounded-full">
+                                </a>
                             </td>
                             <td class="py-3 px-4 text-center">
                                 <div class="flex justify-center space-x-2">
