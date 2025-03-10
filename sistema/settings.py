@@ -146,11 +146,3 @@ AUTHENTICATION_BACKENDS = [
     'arpeta.backends.EmailAuthBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
-
-
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
-if not User.objects.filter(username="manzola").exists():
-    User.objects.create_superuser("manzola", "manuel.anzola31@gmail.com", "mia2712")
-    print("Superusuario creado con éxito")
