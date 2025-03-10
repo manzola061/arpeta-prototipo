@@ -253,7 +253,6 @@ def registrar_vuelta(request):
     return JsonResponse({"error": "Método no permitido."}, status=405)
 
 
-# Nuevo
 @login_required
 def detalles_operador(request, cedula):
     operador = Operador.objects.get(cedula=cedula)
