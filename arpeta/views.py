@@ -4,13 +4,15 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.http import FileResponse, Http404, JsonResponse
+from django.http import FileResponse, Http404, JsonResponse, HttpResponse
 from django.conf import settings
 from django.utils import timezone
 from .models import Operador, Vehiculo, TipoMaterial, Asignacion
 from .forms import OperadorForm, VehiculoForm, AsignacionForm
 import os
 import json
+import qrcode
+from io import BytesIO
 
 # Vista para el inicio de sesión
 def login_view(request):
@@ -157,16 +159,28 @@ def borrar_vehiculo(request, placa):
 # Vista para descargar el código QR de un vehículo (requiere autenticación)
 @login_required
 def descargar_qr(request, placa):
-    try:
-        # Obtiene el vehículo por su placa
-        placa_vehiculo = Vehiculo.objects.get(placa=placa)
-        # Obtiene la ruta del archivo QR
-        qr_path = os.path.join(settings.MEDIA_ROOT, placa_vehiculo.codigo_qr.name)
-        # Devuelve el archivo QR como una respuesta de descarga
-        return FileResponse(open(qr_path, 'rb'), as_attachment=True, filename=os.path.basename(qr_path))
-    except (Vehiculo.DoesNotExist, FileNotFoundError):
-        # Si el vehículo o el archivo QR no existen, devuelve un error 404
-        raise Http404("El QR no existe.")
+    # Obtiene el vehículo por su placa
+    placa_vehiculo = get_object_or_404(Vehiculo, placa=placa)
+
+    # Genera el código QR en memoria
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(placa_vehiculo.placa)  # Usa la placa como dato para el QR
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+
+    # Devuelve el archivo QR como una respuesta de descarga
+    response = HttpResponse(buffer, content_type='image/png')
+    response['Content-Disposition'] = f'attachment; filename="{placa_vehiculo.placa}.png"'
+    return response
 
 
 # Vista para listar asignaciones (requiere autenticación)
