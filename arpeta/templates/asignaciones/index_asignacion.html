@@ -40,22 +40,24 @@
                             <td class="py-3 px-4 text-center">{{ asignacion.total_vueltas }}</td>
                             <td class="py-3 px-4 text-center">{{ asignacion.total_material }} m³</td>
                             <td class="py-3 px-4 text-center">
-                                <form action="{% url 'cambiar_estado' asignacion.id %}" method="post" class="inline" title="Cambiar Estado">
-                                    {% csrf_token %}
-                                    <button type="submit" class="px-4 py-2 rounded-lg text-white transition duration-300 {% if asignacion.estado %}bg-green-500 hover:bg-green-600{% else %}bg-red-500 hover:bg-red-600{% endif %}">
-                                        {% if asignacion.estado %}<i class="fa-solid fa-square-check"></i>{% else %}<i class="fa-solid fa-square-xmark"></i>{% endif %}
-                                    </button>
-                                </form>
-                                <a href="{% url 'editar_asignacion' asignacion.id %}" title="Editar">
-                                    <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition duration-300">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </button>
-                                </a>
-                                <a href="{% url 'borrar_asignacion' asignacion.id %}" title="Borrar">
-                                    <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-300">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </a>
+                                <div class="flex justify-center space-x-2">
+                                    <form action="{% url 'cambiar_estado' asignacion.id %}" method="post" class="inline" title="Cambiar Estado">
+                                        {% csrf_token %}
+                                        <button type="submit" class="px-4 py-2 rounded-lg text-white transition duration-300 {% if asignacion.estado %}bg-green-500 hover:bg-green-600{% else %}bg-red-500 hover:bg-red-600{% endif %}">
+                                            {% if asignacion.estado %}<i class="fa-solid fa-square-check"></i>{% else %}<i class="fa-solid fa-square-xmark"></i>{% endif %}
+                                        </button>
+                                    </form>
+                                    <a href="{% url 'editar_asignacion' asignacion.id %}" title="Editar">
+                                        <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition duration-300">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                    </a>
+                                    <a href="{% url 'borrar_asignacion' asignacion.id %}" title="Borrar">
+                                        <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-300">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
