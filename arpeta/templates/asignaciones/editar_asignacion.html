@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block titulo %} Editar Asignación {% endblock %}
+
+{% block contenido %}
+
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+
+    <div class="container mx-auto mt-8 px-4">
+        <div class="flex bg-white shadow-lg rounded-lg">
+            
+            <div class="w-full lg:w-1/2 p-6">
+                <div class="bg-gray-200 text-gray-800 rounded-t-lg px-6 py-4">
+                    <center><h4 class="text-2xl font-semibold">Editar Asignación</h4></center>
+                </div>
+
+                <div class="p-6">
+                    {% for campo in formulario %}
+                        <div class="mb-4">
+                            <label for="{{ campo.id_for_label }}" class="block text-lg font-medium text-gray-700">
+                                {{ campo.label }}:
+                            </label>
+
+                            {% if campo.field.widget.input_type == "checkbox" %}
+                                <div class="mt-2">
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="{{ campo.name }}" id="{{ campo.name }}_yes" value="True" {% if campo.value == True %}checked{% endif %} class="form-radio text-blue-600">
+                                        <span class="ml-2">Activo</span>
+                                    </label>
+                                    <label class="inline-flex items-center ml-6">
+                                        <input type="radio" name="{{ campo.name }}" id="{{ campo.name }}_no" value="False" {% if campo.value == False %}checked{% endif %} class="form-radio text-blue-600">
+                                        <span class="ml-2">Inactivo</span>
+                                    </label>
+                                </div>
+                            {% elif campo.field.widget.input_type == "select" and campo.name == "tipo_material" %}
+                                <div class="relative">
+                                    <select class="form-select mt-2 block w-full px-4 py-2 text-lg border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" name="{{ campo.name }}" id="{{ campo.id_for_label }}">
+                                        {% for opcion in campo.field.choices %}
+                                            <option value="{{ opcion.0 }}" {% if opcion.0 == campo.value %}selected{% endif %}>
+                                                {{ opcion.1 }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="button" id="btnNuevoMaterial" class="absolute top-2 right-2 bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-700">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            {% else %}
+                                <input type="{{ campo.field.widget.input_type }}" class="mt-2 block w-full px-4 py-2 text-lg border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" name="{{ campo.name }}" id="{{ campo.id_for_label }}" placeholder="{{ campo.label }}" value="{{ campo.value | default:'' }}" />
+                            {% endif %}
+                        </div>
+                        <div class="text-red-500 text-sm">{{ campo.errors }}</div>
+                    {% endfor %}
+
+                    <div class="flex justify-between mt-4">
+                        <input type="submit" class="bg-green-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-green-700" value="Aceptar" />
+                        <a href="{% url 'asignaciones' %}" class="bg-red-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-red-800" role="button">Cancelar</a>
+                    </div>
+                </div>
+
+                <div class="bg-gray-100 text-center py-4 rounded-b-lg"></div>
+            </div>
+
+            <div class="hidden lg:block w-1/2">
+                <div class="w-full h-full bg-gray-200 flex items-center justify-center rounded-r-lg">
+                    {% if form.instance.camion and form.instance.camion.image %}
+                        <img src="{{ form.instance.camion.image.url }}" alt="Imagen del camión" class="w-full h-full object-cover rounded-r-lg">
+                    {% else %}
+                        <span class="text-gray-500 text-4xl">No se ha cargado imagen del camión</span>
+                    {% endif %}
+                    
+                    {% if form.instance.camionero and form.instance.camionero.image %}
+                        <img src="{{ form.instance.camionero.image.url }}" alt="Imagen del camionero" class="w-full h-full object-cover rounded-r-lg mt-4">
+                    {% else %}
+                        <span class="text-gray-500 text-4xl mt-4">No se ha cargado imagen del camionero</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal para agregar un nuevo material -->
+<div id="modalMaterial" class="hidden fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-xl font-semibold mb-4">Agregar Nuevo Material</h2>
+        <label for="nuevoMaterial" class="block text-lg font-medium text-gray-700">Nombre del Material:</label>
+        <input type="text" id="nuevoMaterial" class="mt-2 block w-full px-4 py-2 text-lg border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Ingrese el nombre del material">
+
+        <div class="flex justify-end mt-4">
+            <button id="btnCerrarModal" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700 mr-2">Cancelar</button>
+            <button id="btnGuardarMaterial" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700">Aceptar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const btnNuevoMaterial = document.getElementById('btnNuevoMaterial');
+    const modalMaterial = document.getElementById('modalMaterial');
+    const btnCerrarModal = document.getElementById('btnCerrarModal');
+    const btnGuardarMaterial = document.getElementById('btnGuardarMaterial');
+    const inputNuevoMaterial = document.getElementById('nuevoMaterial');
+
+    btnNuevoMaterial.addEventListener('click', () => {
+        modalMaterial.classList.remove('hidden');
+    });
+
+    btnCerrarModal.addEventListener('click', () => {
+        modalMaterial.classList.add('hidden');
+    });
+
+    modalMaterial.addEventListener('click', (event) => {
+        if (event.target === modalMaterial) {
+            modalMaterial.classList.add('hidden');
+        }
+    });
+
+    btnGuardarMaterial.addEventListener('click', async () => {
+        const nombreMaterial = inputNuevoMaterial.value.trim();
+
+        if (!nombreMaterial) {
+            alert('Por favor, ingrese el nombre del material.');
+            return;
+        }
+
+        try {
+            const response = await fetch("{% url 'crear_tipo_material' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({ nombre: nombreMaterial }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                modalMaterial.classList.add('hidden');
+                inputNuevoMaterial.value = '';
+
+                const selectMaterial = document.querySelector('select[name="tipo_material"]');
+                if (selectMaterial) {
+                    const option = document.createElement('option');
+                    option.value = data.id;
+                    option.textContent = data.nombre;
+                    selectMaterial.appendChild(option);
+                    selectMaterial.value = data.id;
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al conectar con el servidor.');
+        }
+    });
+</script>
+
+{% endblock %}

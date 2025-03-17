@@ -7,7 +7,7 @@ from django.core.paginator import Paginator
 from django.http import FileResponse, Http404, JsonResponse
 from django.conf import settings
 from django.utils import timezone
-from .models import Operador, Vehiculo, TipoMaterial, Asignacion
+from .models import Operador, Vehiculo, TipoMaterial, Asignacion, Marca, Modelo
 from .forms import OperadorForm, VehiculoForm, AsignacionForm
 import os
 import json
@@ -198,6 +198,22 @@ def crear_asignacion(request):
         formulario = AsignacionForm()
     return render(request, 'asignaciones/crear_asignacion.html', {'formulario': formulario})
 
+@login_required
+def editar_asignacion(request, id):
+    asignacion = Asignacion.objects.get(id=id)
+    formulario = AsignacionForm(request.POST or None, instance=asignacion)
+    if formulario.is_valid() and request.POST:
+        formulario.save()
+        return redirect('asignaciones')
+    return render(request, 'asignaciones/editar_asignacion.html', {'formulario': formulario})
+
+
+@login_required
+def borrar_asignacion(request, id):
+    asignacion = Asignacion.objects.get(id=id)
+    asignacion.delete()
+    return redirect('asignaciones')
+
 
 # Vista para cambiar el estado de una asignación (requiere autenticación)
 @login_required
@@ -253,6 +269,7 @@ def registrar_vuelta(request):
     return JsonResponse({"error": "Método no permitido."}, status=405)
 
 
+# Vista para ver los detalles de un operador (requiere autenticación)
 @login_required
 def detalles_operador(request, cedula):
     operador = Operador.objects.get(cedula=cedula)
@@ -267,3 +284,37 @@ def detalles_operador(request, cedula):
         'foto_operador': operador.foto_operador.url if operador.foto_operador else None,
     }
     return JsonResponse(data)
+
+
+# Vista para crear una marca y modelo (requiere autenticación)
+@login_required
+def crear_modelo_marca(request):
+    if request.method == 'POST':
+        try:
+            # Parsear el cuerpo de la solicitud JSON
+            data = json.loads(request.body)
+            marca_nombre = data.get('marca')
+            modelo_nombre = data.get('modelo')
+            # Crear la nueva marca si no existe
+            marca, created = Marca.objects.get_or_create(nombre=marca_nombre)
+            # Crear el nuevo modelo asociado a la marca
+            modelo = Modelo.objects.create(nombre=modelo_nombre, marca=marca)
+            # Devolver una respuesta JSON con los datos creados
+            return JsonResponse({
+                'success': True,
+                'id': modelo.id,
+                'marca': marca.nombre,
+                'modelo': modelo.nombre,
+            })
+        except Exception as e:
+            # Manejar cualquier error que ocurra
+            return JsonResponse({
+                'success': False,
+                'error': str(e),
+            }, status=400)
+    else:
+        # Si no es una solicitud POST, devolver un error
+        return JsonResponse({
+            'success': False,
+            'error': 'Método no permitido',
+        }, status=405)
