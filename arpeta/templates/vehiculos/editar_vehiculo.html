@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block titulo %} Editar Vehículo {% endblock %}
+{% block titulo %} Agregar Vehículo {% endblock %}
 
 {% block contenido %}
 
@@ -9,21 +9,35 @@
 
     <div class="container mx-auto mt-8 px-4">
         <div class="flex bg-white shadow-lg rounded-lg">
-
+            
             <div class="w-full lg:w-1/2 p-6">
                 <div class="bg-gray-200 text-gray-900 rounded-t-lg px-6 py-4">
-                    <center><h4 class="text-2xl font-semibold">Editar Vehículo</h4> </center>
+                    <center><h4 class="text-2xl font-semibold">Agregar Vehículo</h4> </center>
                 </div>
 
                 <div class="p-6">
                     {% for campo in formulario %}
-                        {% if campo.name == "placa" or campo.name == "codigo_qr" %}
+                        {% if campo.name == "codigo_qr" %}
                             <input type="hidden" name="{{ campo.name }}" id="{{ campo.id_for_label }}" value="{{ campo.value | default:'' }}" />
+                        {% elif campo.name == "modelo" %}
+                            <div class="mb-4">
+                                <label for="{{ campo.id_for_label }}" class="block text-lg font-medium text-gray-700">{{ campo.label }}:</label>
+                                <div class="relative">
+                                    <select class="form-select mt-2 block w-full px-4 py-2 text-lg border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" name="{{ campo.name }}" id="{{ campo.id_for_label }}">
+                                        {% for opcion in campo.field.choices %}
+                                            <option value="{{ opcion.0 }}" {% if opcion.0 == campo.value %}selected{% endif %}>
+                                                {{ opcion.1 }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="button" id="btnNuevoModelo" class="absolute top-2 right-2 bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-700">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
                         {% else %}
                             <div class="mb-4">
-                                <label for="{{ campo.id_for_label }}" class="block text-lg font-medium text-gray-700">
-                                    {{ campo.label }}:
-                                </label>
+                                <label for="{{ campo.id_for_label }}" class="block text-lg font-medium text-gray-700">{{ campo.label }}:</label>
                                 {% if campo.field.widget.input_type == "checkbox" %}
                                     <div class="mt-2 flex items-center space-x-4">
                                         <div class="flex items-center">
@@ -46,6 +60,7 @@
                             <div class="col-12 text-red-500 text-sm">{{ campo.errors }}</div>
                         {% endif %}
                     {% endfor %}
+                
                     <div class="mt-6 flex justify-between">
                         <input type="submit" class="bg-green-500 text-white px-6 py-2 rounded-lg text-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500" value="Aceptar" />
                         <a href="{% url 'vehiculos' %}" class="bg-gray-500 text-white px-6 py-2 rounded-lg text-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500" role="button">Cancelar</a>
@@ -58,18 +73,96 @@
 
             <div class="hidden lg:block w-1/2">
                 <div id="imagePreviewContainer" class="w-full h-full bg-gray-200 flex items-center justify-center rounded-r-lg">
-                    <span id="imagePreviewText" class="text-gray-500 text-4xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-14">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
-                        </svg>
-                    </span>
+                    <span id="imagePreviewText" class="text-gray-500 text-4xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-14">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+                    </svg></span>
                     <img id="imagePreview" src="" alt="Imagen del Vehículo" class="hidden w-full h-full object-cover rounded-r-lg" />
                 </div>
             </div>
         </div>
     </div>
-
 </form>
+
+<!-- Modal para agregar nuevo modelo y marca -->
+<div id="modalModelo" class="hidden fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-xl font-semibold mb-4">Agregar Nuevo Modelo y Marca</h2>
+        <label for="nuevaMarca" class="block text-lg font-medium text-gray-700">Nombre de la Marca:</label>
+        <input type="text" id="nuevaMarca" class="mt-2 block w-full px-4 py-2 text-lg border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Ingrese el nombre de la marca">
+        
+        <label for="nuevoModelo" class="block text-lg font-medium text-gray-700 mt-4">Nombre del Modelo:</label>
+        <input type="text" id="nuevoModelo" class="mt-2 block w-full px-4 py-2 text-lg border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Ingrese el nombre del modelo">
+
+        <div class="flex justify-end mt-4">
+            <button id="btnCerrarModalModelo" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700 mr-2">Cancelar</button>
+            <button id="btnGuardarModelo" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700">Aceptar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const btnNuevoModelo = document.getElementById('btnNuevoModelo');
+    const modalModelo = document.getElementById('modalModelo');
+    const btnCerrarModalModelo = document.getElementById('btnCerrarModalModelo');
+    const btnGuardarModelo = document.getElementById('btnGuardarModelo');
+    const inputNuevaMarca = document.getElementById('nuevaMarca');
+    const inputNuevoModelo = document.getElementById('nuevoModelo');
+
+    btnNuevoModelo.addEventListener('click', () => {
+        modalModelo.classList.remove('hidden');
+    });
+
+    btnCerrarModalModelo.addEventListener('click', () => {
+        modalModelo.classList.add('hidden');
+    });
+
+    modalModelo.addEventListener('click', (event) => {
+        if (event.target === modalModelo) {
+            modalModelo.classList.add('hidden');
+        }
+    });
+
+    btnGuardarModelo.addEventListener('click', async () => {
+        const nombreMarca = inputNuevaMarca.value.trim();
+        const nombreModelo = inputNuevoModelo.value.trim();
+
+        if (!nombreMarca || !nombreModelo) {
+            alert('Por favor, ingrese el nombre de la marca y el modelo.');
+            return;
+        }
+
+        try {
+            const response = await fetch("{% url 'crear_modelo_marca' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({ marca: nombreMarca, modelo: nombreModelo }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                modalModelo.classList.add('hidden');
+                inputNuevaMarca.value = '';
+                inputNuevoModelo.value = '';
+
+                const selectModelo = document.querySelector('select[name="modelo"]');
+                if (selectModelo) {
+                    const option = document.createElement('option');
+                    option.value = data.id;
+                    option.textContent = `${data.marca} - ${data.modelo}`;
+                    selectModelo.appendChild(option);
+                    selectModelo.value = data.id;
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al conectar con el servidor.');
+        }
+    });
+</script>
 
 {% endblock %}

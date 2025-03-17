@@ -27,7 +27,7 @@
                             <th class="py-3 px-4 text-center text-gray-700 font-semibold">Tipo de Material</th>
                             <th class="py-3 px-4 text-center text-gray-700 font-semibold">Total de Vueltas</th>
                             <th class="py-3 px-4 text-center text-gray-700 font-semibold">Total de Material</th>
-                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Estado</th>
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,14 +38,24 @@
                             <td class="py-3 px-4 text-center">{{ asignacion.fecha_formateada }}</td>
                             <td class="py-3 px-4 text-center">{{ asignacion.tipo_material }}</td>
                             <td class="py-3 px-4 text-center">{{ asignacion.total_vueltas }}</td>
-                            <td class="py-3 px-4 text-center">{{ asignacion.total_material }} m</td>
+                            <td class="py-3 px-4 text-center">{{ asignacion.total_material }} m³</td>
                             <td class="py-3 px-4 text-center">
-                                <form action="{% url 'cambiar_estado' asignacion.id %}" method="post" class="inline">
+                                <form action="{% url 'cambiar_estado' asignacion.id %}" method="post" class="inline" title="Cambiar Estado">
                                     {% csrf_token %}
                                     <button type="submit" class="px-4 py-2 rounded-lg text-white transition duration-300 {% if asignacion.estado %}bg-green-500 hover:bg-green-600{% else %}bg-red-500 hover:bg-red-600{% endif %}">
-                                        {% if asignacion.estado %}Activo{% else %}Inactivo{% endif %}
+                                        {% if asignacion.estado %}<i class="fa-solid fa-square-check"></i>{% else %}<i class="fa-solid fa-square-xmark"></i>{% endif %}
                                     </button>
                                 </form>
+                                <a href="{% url 'editar_asignacion' asignacion.id %}" title="Editar">
+                                    <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition duration-300">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                </a>
+                                <a href="{% url 'borrar_asignacion' asignacion.id %}" title="Borrar">
+                                    <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-300">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -76,5 +86,51 @@
 </div>
 
 <input type="text" id="qrInput" style="opacity: 0; position: absolute; left: -9999px;" autofocus>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const qrInput = document.getElementById("qrInput");
+
+        function focusQRInput() {
+            setTimeout(() => qrInput.focus(), 100);
+        }
+
+        // Forzar el foco en el input al cargar la página
+        focusQRInput();
+
+        // Restaurar el foco cuando se haga clic en cualquier parte de la página
+        document.addEventListener("click", focusQRInput);
+
+        // Capturar el escaneo del QR y enviar los datos
+        qrInput.addEventListener("change", function () {
+            let placa = qrInput.value.trim();
+            
+            if (placa) {
+                console.log("Placa escaneada:", placa);
+
+                fetch("{% url 'registrar_vuelta' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({ placa: placa })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        // Refrescar la página automáticamente para mostrar los cambios
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error("Error en la solicitud:", error));
+
+                // Limpiar el input y volver a enfocarlo
+                qrInput.value = "";
+                focusQRInput();
+            }
+        });
+    });
+</script>
 
 {% endblock %}

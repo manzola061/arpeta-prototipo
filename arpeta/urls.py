@@ -11,18 +11,20 @@ urlpatterns = [
     path('operadores/crear_operador', views.crear_operador, name='crear_operador'),
     path('operadores/editar_operador/<str:cedula>/', views.editar_operador, name='editar_operador'),
     path('operadores/borrar_operador/<str:cedula>/', views.borrar_operador, name='borrar_operador'),
+    path('operadores/detalles/<str:cedula>/', views.detalles_operador, name='detalles_operador'),
 
     path('vehiculos', views.vehiculos, name='vehiculos'),
     path('vehiculos/crear_vehiculo', views.crear_vehiculo, name='crear_vehiculo'),
     path('vehiculos/editar_vehiculo/<str:placa>/', views.editar_vehiculo, name='editar_vehiculo'),
     path('vehiculos/borrar_vehiculo/<str:placa>/', views.borrar_vehiculo, name='borrar_vehiculo'),
+    path('crear_modelo_marca/', views.crear_modelo_marca, name='crear_modelo_marca'),
     path('descargar_qr/<str:placa>/', views.descargar_qr, name='descargar_qr'),
 
     path('asignaciones', views.asignaciones, name='asignaciones'),
     path('asignaciones/crear_asignacion', views.crear_asignacion, name='crear_asignacion'),
-    path('cambiar_estado/<int:id>/', views.cambiar_estado, name='cambiar_estado'),
+    path('asignaciones/editar_asignacion/<int:id>/', views.editar_asignacion, name='editar_asignacion'),
+    path('asignaciones/borrar_asignacion/<int:id>/', views.borrar_asignacion, name='borrar_asignacion'),
     path("crear_tipo_material/", views.crear_tipo_material, name="crear_tipo_material"),
+    path('cambiar_estado/<int:id>/', views.cambiar_estado, name='cambiar_estado'),
     path("registrar_vuelta/", views.registrar_vuelta, name="registrar_vuelta"),
-
-    path('operadores/detalles/<str:cedula>/', views.detalles_operador, name='detalles_operador'),
 ]

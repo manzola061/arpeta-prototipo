@@ -26,6 +26,7 @@
                             <th class="py-3 px-4 text-center text-gray-700 font-semibold">Nombre</th>
                             <th class="py-3 px-4 text-center text-gray-700 font-semibold">Apellido</th>
                             <th class="py-3 px-4 text-center text-gray-700 font-semibold">Teléfono</th>
+                            <th class="py-3 px-4 text-center text-gray-700 font-semibold">Independiente</th>
                             <th class="py-3 px-4 text-center text-gray-700 font-semibold">Acciones</th>
                         </tr>
                     </thead>
@@ -36,6 +37,7 @@
                             <td class="py-3 px-4 text-center">{{ operador.nombre }}</td>
                             <td class="py-3 px-4 text-center">{{ operador.apellido }}</td>
                             <td class="py-3 px-4 text-center">{{ operador.telefono }}</td>
+                            <td class="py-3 px-4 text-center">{{ operador.independiente_texto }}</td>
                             <td class="py-3 px-4 text-center">
                                 <div class="flex justify-center space-x-2">
                                     <!-- Botón para ver detalles -->
@@ -111,7 +113,7 @@
                     <p><strong>Correo:</strong> ${data.correo}</p>
                     <p><strong>Dirección:</strong> ${data.direccion}</p>
                     <p><strong>Independiente:</strong> ${data.independiente_texto}</p>
-                    <p><strong>Foto:</strong> ${data.foto_operador ? `<img src="${data.foto_operador}" alt="Foto" class="w-12 h-12 rounded-full">` : 'Sin foto'}</p>
+                    <p><strong>Foto:</strong> ${data.foto_operador ? `<img src="${data.foto_operador}" alt="Foto" class="w-12 h-12 rounded-full">` : 'Foto no disponible'}</p>
                 `;
                 document.getElementById('detalles-contenido').innerHTML = contenido;
                 document.getElementById('modal-detalles').classList.remove('hidden');
